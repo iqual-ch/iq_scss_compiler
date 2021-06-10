@@ -1,0 +1,4 @@
+services:
+  iq_scss_compiler.compilation_service:
+    class: Drupal\iq_scss_compiler\Service\CompilationService
+    arguments: ['@logger.factory']

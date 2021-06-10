@@ -1,0 +1,6 @@
+services:
+  drush9_iq_scss_compiler.commands:
+    class: \Drupal\iq_scss_compiler\Commands\SassCommands
+    tags:
+      - { name: drush.command }
+    arguments: ["@logger.factory"]
