@@ -27,6 +27,7 @@ class SassCommands extends DrushCommands {
    *
    * @command iq_scss_compiler:watch
    * @aliases iq_scss_compiler-watch
+   * @aliases iqsc:watch
    *
    * @usage drush iq_scss_compiler:watch --folders=themes,modules
    */
@@ -52,6 +53,7 @@ class SassCommands extends DrushCommands {
    *
    * @command iq_scss_compiler:compile
    * @aliases iq_scss_compiler-compile
+   * @aliases iqsc:compile
    *
    * @usage drush iq_scss_compiler:compile --folders=themes,modules,sites/default/files/styling_profiles --continueOnErrors=false --verbose=false
    */
