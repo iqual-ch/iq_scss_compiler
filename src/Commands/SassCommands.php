@@ -46,7 +46,7 @@ class SassCommands extends DrushCommands {
   }
 
   /**
-   * Compile scss
+   * Compile scss.
    *
    * @options folders Whether or not an extra message should be displayed to the user.
    *
@@ -56,10 +56,9 @@ class SassCommands extends DrushCommands {
    * @usage drush iq_scss_compiler:compile --folders=themes,modules,sites/default/files/styling_profiles --continueOnErrors=false --verbose=false
    */
   public function compile($options = [
-    'folders' => 'themes,modules,sites/default/files/styling_profiles', 
-    'continueOnErrors' => false, 
-    'verbose' => false
-    ]) {
+    'folders' => 'themes,modules,sites/default/files/styling_profiles',
+    'continueOnErrors' => FALSE,
+  ]) {
     $folders = explode(',', str_replace('}', '', str_replace('{', '', $options['folders'])));
 
     $compilationService = \Drupal::service('iq_scss_compiler.compilation_service');
@@ -72,4 +71,5 @@ class SassCommands extends DrushCommands {
     echo 'Compiling SASS' . "\n";
     $compilationService->compile();
   }
+
 }
