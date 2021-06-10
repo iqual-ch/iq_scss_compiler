@@ -5,23 +5,53 @@ namespace Drupal\iq_scss_compiler\Service;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 
 /**
- *
+ * Compilation service for watching directories and compiling sass files.
  */
 class CompilationService {
 
+  /**
+   * The sources iterator.
+   *
+   * @var \AppendIterator
+   */
   protected $iterator = NULL;
-  protected $configs = [];
-  protected $compiler = NULL;
-  protected $changeRegistered = FALSE;
-  protected $isCompiling = FALSE;
-  
-  protected $logger = null;
 
+  /**
+   * Configs encountered in source directories.
+   *
+   * @var array
+   */
+  protected $configs = [];
+
+  /**
+   * The scss/sass compiler.
+   *
+   * @var \Sass
+   */
+  protected $compiler = NULL;
+
+  /**
+   * The logger.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
+   */
+  protected $logger = NULL;
+
+  /**
+   * The watch pause flag file.
+   */
   const WATCH_FILE = '/tmp/iqsc_watch_paused';
+
+  /**
+   * The compilation flag file.
+   */
   const COMPILE_FILE = '/tmp/iqsc_compiling';
 
   /**
+   * Create compilation service.
    *
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $loggerChannelFactory
+   *   The logger factory.
    */
   public function __construct(LoggerChannelFactoryInterface $loggerChannelFactory) {
     $this->logger = $loggerChannelFactory->get('iq_scss_compiler');
@@ -39,9 +69,12 @@ class CompilationService {
   }
 
   /**
+   * Add a source directory for watching/compilation.
    *
+   * @param string $directory
+   *   The directory path.
    */
-  public function addSource($directory) {
+  public function addSource(string $directory) {
     if (is_dir($directory)) {
       $files = new \RecursiveDirectoryIterator($directory);
       $recursiveIterator = new \RecursiveIteratorIterator($files);
@@ -50,42 +83,48 @@ class CompilationService {
   }
 
   /**
-   *
+   * Pause watching.
    */
   public function pauseWatch() {
     touch(static::WATCH_FILE);
   }
 
   /**
-   *
+   * Unpause watching.
    */
   public function resumeWatch() {
     unlink(static::WATCH_FILE);
   }
 
   /**
+   * Whether watching is paused.
    *
+   * @return bool
+   *   Whether watching is paused.
    */
   public function isPaused() {
     return file_exists(static::WATCH_FILE);
   }
 
   /**
-   *
+   * Create compilation flag.
    */
   public function startCompilation() {
     touch(static::COMPILE_FILE);
   }
 
   /**
-   *
+   * Remove compilation flag.
    */
   public function stopCompilation() {
     unlink(static::COMPILE_FILE);
   }
 
   /**
+   * Whether compilation is running.
    *
+   * @return bool
+   *   Whether compilation is running.
    */
   public function isCompiling() {
     return file_exists(static::COMPILE_FILE);
@@ -95,6 +134,7 @@ class CompilationService {
    * Checks whether the iterator contains any sources and rewinds the iterator.
    *
    * @return bool
+   *   True, when there are any sources registered.
    */
   public function hasSources() {
     $count = iterator_count($this->iterator);
@@ -103,15 +143,19 @@ class CompilationService {
   }
 
   /**
+   * Watch the sources for changes and compile them instantly.
    *
+   * @param int $ttl
+   *   How long the watcher should run. Defaults to 60 minutes.
    */
-  public function watch($ttl) {
+  public function watch($ttl = 60) {
     if (!$this->hasSources()) {
       $this->logger->warn('Watcher found no sources');
       return;
     }
     $startTime = time();
     $fd = \inotify_init();
+    $changeRegistered = FALSE;
 
     // Collect all config files and save per path.
     while ($this->iterator->valid()) {
@@ -121,8 +165,8 @@ class CompilationService {
     }
     $this->iterator->rewind();
     while ($this->iterator->valid()) {
-      if (inotify_queue_len($fd) === 0 && $this->changeRegistered && !$this->isCompiling()) {
-        $this->changeRegistered = FALSE;
+      if (inotify_queue_len($fd) === 0 && $changeRegistered && !$this->isCompiling()) {
+        $changeRegistered = FALSE;
         $this->compile();
       }
       $events = \inotify_read($fd);
@@ -142,10 +186,9 @@ class CompilationService {
             case ($evdetails['mask'] & IN_DELETE):
             case ($evdetails['mask'] & IN_DELETE_SELF):
               if (preg_match_all('/\.scss$/', $evdetails['name'])) {
-                $this->changeRegistered = TRUE;
+                $changeRegistered = TRUE;
               }
               break;
-            break;
           }
         }
       }
@@ -157,9 +200,14 @@ class CompilationService {
   }
 
   /**
+   * Compile any sass files in the source directories.
    *
+   * @param bool $continueOnError
+   *   Continue on compilation errors.
+   * @param bool $verbose
+   *   Be verbose about the process.
    */
-  public function compile($continueOnError = false, $verbose = false) {
+  public function compile($continueOnError = FALSE, $verbose = FALSE) {
     $this->pauseWatch();
     $this->startCompilation();
     // Collect all config files and save per path.
@@ -178,15 +226,18 @@ class CompilationService {
       if ($scssFile->isFile() && $scssFile->getExtension() == 'scss' && strpos($scssFile->getFilename(), '_') !== 0) {
         $sourceFile = $scssFile->getPath() . '/' . $scssFile->getFilename();
         try {
-          $css = $this->compiler->compileFile($sourceFile);  
-        } catch(\Exception $e) {
+          $css = $this->compiler->compileFile($sourceFile);
+        }
+        catch (\Exception $e) {
           if ($continueOnError) {
-            if ($verbose) { 
+            if ($verbose) {
               echo $e->getMessage() . "\n\n";
-            } else {
+            }
+            else {
               $this->logger->error($e->getMessage());
             }
-          } else {
+          }
+          else {
             throw $e;
           }
         }
@@ -198,8 +249,8 @@ class CompilationService {
           $targetFile = $scssFile->getPath() . '/' . $this->configs[$scssFile->getPath()]['css_dir'] . '/' . str_replace('scss', 'css', $scssFile->getFilename());
         }
         file_put_contents($targetFile, $css);
-        if ($verbose) { 
-          $message = 'Compiled ' .  $sourceFile ' into ' . $targetFile;
+        if ($verbose) {
+          $message = 'Compiled ' . $sourceFile . ' into ' . $targetFile;
           echo $message . "\n";
         }
       }
@@ -210,5 +261,4 @@ class CompilationService {
     $this->stopCompilation();
     $this->resumeWatch();
   }
-
 }
