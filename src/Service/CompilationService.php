@@ -261,4 +261,5 @@ class CompilationService {
     $this->stopCompilation();
     $this->resumeWatch();
   }
+
 }
