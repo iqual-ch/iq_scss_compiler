@@ -25,10 +25,10 @@ class SassCommands extends DrushCommands {
    *
    * @options folders Whether or not an extra message should be displayed to the user.
    *
-   * @command iq_scss_compiler:sass-watch
-   * @aliases iq_scss_compiler-sass-watch
+   * @command iq_scss_compiler:watch
+   * @aliases iq_scss_compiler-watch
    *
-   * @usage drush iq_scss_compiler:sass-watch --folders=themes,modules
+   * @usage drush iq_scss_compiler:watch --folders=themes,modules
    */
   public function watch($options = ['folders' => 'themes', 'ttl' => 60]) {
     $folders = explode(',', str_replace('}', '', str_replace('{', '', $options['folders'])));
@@ -38,7 +38,7 @@ class SassCommands extends DrushCommands {
     foreach ($folders as $folder) {
       $folder = trim($folder);
       if (!empty($folder)) {
-        $compilationService->addSource('/var/www/public/' . $folder);
+        $compilationService->addSource(DRUPAL_ROOT . '/' . $folder);
       }
     }
     echo 'Starting sass watch' . "\n";
@@ -50,19 +50,23 @@ class SassCommands extends DrushCommands {
    *
    * @options folders Whether or not an extra message should be displayed to the user.
    *
-   * @command iq_scss_compiler:sass-compile
-   * @aliases iq_scss_compiler-sass-compile
+   * @command iq_scss_compiler:compile
+   * @aliases iq_scss_compiler-compile
    *
-   * @usage drush iq_scss_compiler:sass-compile --folders=themes,modules,sites/default/files/styling_profiles --continueOnErrors=false --verbose=false
+   * @usage drush iq_scss_compiler:compile --folders=themes,modules,sites/default/files/styling_profiles --continueOnErrors=false --verbose=false
    */
-  public function compile($options = ['folders' => 'themes,modules,sites/default/files/styling_profiles', 'continueOnErrors' => false, 'verbose' => false]) {
+  public function compile($options = [
+    'folders' => 'themes,modules,sites/default/files/styling_profiles', 
+    'continueOnErrors' => false, 
+    'verbose' => false
+    ]) {
     $folders = explode(',', str_replace('}', '', str_replace('{', '', $options['folders'])));
 
     $compilationService = \Drupal::service('iq_scss_compiler.compilation_service');
     foreach ($folders as $folder) {
       $folder = trim($folder);
       if (!empty($folder)) {
-        $compilationService->addSource('/var/www/public/' . $folder);
+        $compilationService->addSource(DRUPAL_ROOT . '/' . $folder);
       }
     }
     echo 'Compiling SASS' . "\n";

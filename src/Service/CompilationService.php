@@ -159,7 +159,7 @@ class CompilationService {
   /**
    *
    */
-  public function compile($continueOnError = false) {
+  public function compile($continueOnError = false, $verbose = false) {
     $this->pauseWatch();
     $this->startCompilation();
     // Collect all config files and save per path.
@@ -182,7 +182,7 @@ class CompilationService {
         } catch(\Exception $e) {
           if ($continueOnError) {
             if ($verbose) { 
-              echo $e->getMessage();
+              echo $e->getMessage() . "\n\n";
             } else {
               $this->logger->error($e->getMessage());
             }
@@ -200,7 +200,7 @@ class CompilationService {
         file_put_contents($targetFile, $css);
         if ($verbose) { 
           $message = 'Compiled ' .  $sourceFile ' into ' . $targetFile;
-          $this->logger->error($message);
+          echo $message . "\n";
         }
       }
       $this->iterator->next();
