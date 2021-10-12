@@ -2,4 +2,4 @@ name: 'iq_scss_compiler'
 type: module
 description: 'Provides scss compilation'
 package: 'Theme helper'
-core: 8.x
+core_version_requirement: ^8.8 || ^9
