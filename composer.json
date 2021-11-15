@@ -10,6 +10,9 @@
 		"issues": "https://github.com/iqual-ch/iq_scss_compiler/issues",
 		"source": "https://github.com/iqual-ch/iq_scss_compiler"
 	},
+  "require": {
+    "abm/sassphp": "^0.7.0"
+  },
 	"extra": {
 		"drush": {
 			"services": {
