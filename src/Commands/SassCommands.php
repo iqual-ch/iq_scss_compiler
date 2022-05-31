@@ -55,10 +55,10 @@ class SassCommands extends DrushCommands {
    * @aliases iq_scss_compiler-compile
    * @aliases iqsc:compile
    *
-   * @usage drush iq_scss_compiler:compile --folders=themes,modules,sites/default/files/styling_profiles --continueOnErrors=false --verbose=false
+   * @usage drush iq_scss_compiler:compile --folders=themes/custom,modules/custom,sites/default/files/styling_profiles --continueOnErrors=false --verbose=false
    */
   public function compile($options = [
-    'folders' => 'themes,modules,sites/default/files/styling_profiles',
+    'folders' => 'themes/custom,modules/custom,sites/default/files/styling_profiles',
     'continueOnErrors' => FALSE,
   ]) {
     $folders = explode(',', str_replace('}', '', str_replace('{', '', $options['folders'])));
