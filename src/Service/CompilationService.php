@@ -3,6 +3,8 @@
 namespace Drupal\iq_scss_compiler\Service;
 
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use ScssPhp\ScssPhp\Compiler;
+use ScssPhp\ScssPhp\OutputStyle;
 
 /**
  * Compilation service for watching directories and compiling sass files.
@@ -56,8 +58,8 @@ class CompilationService {
   public function __construct(LoggerChannelFactoryInterface $loggerChannelFactory) {
     $this->logger = $loggerChannelFactory->get('iq_scss_compiler');
     $this->iterator = new \AppendIterator();
-    $this->compiler = new \Sass();
-    $this->compiler->setStyle(\Sass::STYLE_COMPRESSED);
+    $this->compiler = new Compiler();
+    $this->compiler->setOutputStyle(OutputStyle::COMPRESSED);
 
     // Reset state to be sure.
     if ($this->isPaused() && filemtime(static::WATCH_FILE) - 300 > time()) {
@@ -226,7 +228,7 @@ class CompilationService {
       if ($scssFile->isFile() && $scssFile->getExtension() == 'scss' && strpos($scssFile->getFilename(), '_') !== 0) {
         $sourceFile = $scssFile->getPath() . '/' . $scssFile->getFilename();
         try {
-          $css = $this->compiler->compileFile($sourceFile);
+          $css = $this->compiler->compileString(file_get_contents($sourceFile))->getCss();
         }
         catch (\Exception $e) {
           if ($continueOnError) {
