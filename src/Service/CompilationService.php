@@ -228,7 +228,7 @@ class CompilationService {
       if ($scssFile->isFile() && $scssFile->getExtension() == 'scss' && strpos($scssFile->getFilename(), '_') !== 0) {
         $sourceFile = $scssFile->getPath() . '/' . $scssFile->getFilename();
         try {
-          $css = $this->compiler->compileString(file_get_contents($sourceFile))->getCss();
+          $css = $this->compiler->compileString('@import "' . $sourceFile . '";')->getCss();
         }
         catch (\Exception $e) {
           if ($continueOnError) {
