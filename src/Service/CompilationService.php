@@ -37,6 +37,14 @@ class CompilationService {
    */
   protected $logger = NULL;
 
+
+  /**
+   * Whether the call originated on cli.
+   *
+   * @var bool
+   */
+  protected $isCli = FALSE;
+
   /**
    * The watch pause flag file.
    */
@@ -65,6 +73,9 @@ class CompilationService {
     }
     if ($this->isCompiling() && filemtime(static::COMPILE_FILE) - 300 > time()) {
       $this->stopCompilation();
+    }
+    if (PHP_SAPI === 'cli') {
+      $this->isCli = TRUE;
     }
   }
 
@@ -210,6 +221,9 @@ class CompilationService {
   public function compile($continueOnError = FALSE, $verbose = FALSE) {
     $this->pauseWatch();
     $this->startCompilation();
+
+    \Drupal::moduleHandler()->invokeAll('iq_scss_compiler_pre_compile', [$this->isCli, &$this->iterator]);
+
     // Collect all config files and save per path.
     while ($this->iterator->valid()) {
       $file = $this->iterator->current();
@@ -257,6 +271,8 @@ class CompilationService {
       $this->iterator->next();
     }
     $this->iterator->rewind();
+
+    \Drupal::moduleHandler()->invokeAll('iq_scss_compiler_post_compile', [$this->isCli, &$this->iterator]);
 
     $this->stopCompilation();
     $this->resumeWatch();
