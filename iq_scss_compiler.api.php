@@ -5,6 +5,8 @@
  * Hooks related to SCSS compiler module.
  */
 
+use Drupal\iq_scss_compiler\Service\CompilationService;
+
 /**
  * Called before the compilation starts.
  *
@@ -13,7 +15,8 @@
  * @param \AppendIterator &$iterator
  *   The file iterator.
  */
-function hook_iq_scss_compiler_pre_compile($cli = TRUE, \AppendIterator $iterator = NULL) {
+function hook_iq_scss_compiler_pre_compile(CompilationService $compilationService)
+{
 }
 
 /**
@@ -24,5 +27,6 @@ function hook_iq_scss_compiler_pre_compile($cli = TRUE, \AppendIterator $iterato
  * @param \AppendIterator &$iterator
  *   The file iterator.
  */
-function hook_iq_scss_compiler_post_compile($cli = TRUE, \AppendIterator $iterator = NULL) {
+function hook_iq_scss_compiler_post_compile(CompilationService $compilationService)
+{
 }

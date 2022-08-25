@@ -222,7 +222,7 @@ class CompilationService {
     $this->pauseWatch();
     $this->startCompilation();
 
-    \Drupal::moduleHandler()->invokeAll('iq_scss_compiler_pre_compile', [$this->isCli, &$this->iterator]);
+    \Drupal::moduleHandler()->invokeAll('iq_scss_compiler_pre_compile', [&$this]);
 
     // Collect all config files and save per path.
     while ($this->iterator->valid()) {
@@ -272,7 +272,7 @@ class CompilationService {
     }
     $this->iterator->rewind();
 
-    \Drupal::moduleHandler()->invokeAll('iq_scss_compiler_post_compile', [$this->isCli, &$this->iterator]);
+    \Drupal::moduleHandler()->invokeAll('iq_scss_compiler_post_compile', [&$this]);
 
     $this->stopCompilation();
     $this->resumeWatch();
