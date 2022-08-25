@@ -10,10 +10,8 @@ use Drupal\iq_scss_compiler\Service\CompilationService;
 /**
  * Called before the compilation starts.
  *
- * @param bool $cli
- *   Whether the call originated from cli.
- * @param \AppendIterator &$iterator
- *   The file iterator.
+ * @param CompilationService $compilationService
+ *   The active compilation service.
  */
 function hook_iq_scss_compiler_pre_compile(CompilationService $compilationService)
 {
@@ -22,11 +20,21 @@ function hook_iq_scss_compiler_pre_compile(CompilationService $compilationServic
 /**
  * Called before the compilation starts.
  *
- * @param bool $cli
- *   Whether the call originated from cli.
- * @param \AppendIterator &$iterator
- *   The file iterator.
+ * @param CompilationService $compilationService
+ *   The active compilation service.
  */
 function hook_iq_scss_compiler_post_compile(CompilationService $compilationService)
+{
+}
+
+/**
+ * Called before saving the compiled css to the target file.
+ *
+ * @param string $css
+ *   The compiled css.
+ * @param array $context
+ *   Arry providing involved files under indexes source and target and the compilation service.
+ */
+function hook_iq_scss_compiler_css(string &$css, array &$context)
 {
 }

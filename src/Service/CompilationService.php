@@ -262,6 +262,11 @@ class CompilationService {
           }
           $targetFile = $scssFile->getPath() . '/' . $this->configs[$scssFile->getPath()]['css_dir'] . '/' . str_replace('scss', 'css', $scssFile->getFilename());
         }
+        
+        // Allow other modules to alter the css before saving it.
+        $context = ['source' => $sourceFile, 'target' => $targetFile, 'service' => $this];
+        \Drupal::moduleHandler()->alter('iq_scss_compiler_css', $css, $context);
+        
         file_put_contents($targetFile, $css);
         if ($verbose) {
           $message = 'Compiled ' . $sourceFile . ' into ' . $targetFile;
