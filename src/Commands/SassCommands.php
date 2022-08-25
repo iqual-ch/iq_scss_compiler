@@ -67,7 +67,7 @@ class SassCommands extends DrushCommands {
     foreach ($folders as $folder) {
       $folder = trim($folder);
       if (!empty($folder)) {
-        $compilationService->addSource(DRUPAL_ROOT . '/' . $folder);
+        $compilationService->addSource(\Drupal::root() . '/' . $folder);
       }
     }
     echo 'Compiling SASS' . "\n";
