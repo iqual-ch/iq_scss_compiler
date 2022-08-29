@@ -43,7 +43,7 @@ class CompilationService {
    *
    * @var bool
    */
-  protected $isCli = FALSE;
+  protected $isCli = PHP_SAPI === 'cli';
 
   /**
    * The watch pause flag file.
@@ -74,9 +74,6 @@ class CompilationService {
     if ($this->isCompiling() && filemtime(static::COMPILE_FILE) - 300 > time()) {
       $this->stopCompilation();
     }
-    if (PHP_SAPI === 'cli') {
-      $this->isCli = TRUE;
-    }
   }
 
   /**
@@ -91,6 +88,10 @@ class CompilationService {
       $recursiveIterator = new \RecursiveIteratorIterator($files);
       $this->iterator->append($recursiveIterator);
     }
+  }
+  
+  public function isCli() {
+    return $this->isCli();
   }
 
   /**
@@ -222,7 +223,7 @@ class CompilationService {
     $this->pauseWatch();
     $this->startCompilation();
 
-    \Drupal::moduleHandler()->invokeAll('iq_scss_compiler_pre_compile', [&$this]);
+    \Drupal::moduleHandler()->invokeAll('iq_scss_compiler_pre_compile', [$this]);
 
     // Collect all config files and save per path.
     while ($this->iterator->valid()) {
@@ -277,7 +278,7 @@ class CompilationService {
     }
     $this->iterator->rewind();
 
-    \Drupal::moduleHandler()->invokeAll('iq_scss_compiler_post_compile', [&$this]);
+    \Drupal::moduleHandler()->invokeAll('iq_scss_compiler_post_compile', [$this]);
 
     $this->stopCompilation();
     $this->resumeWatch();
