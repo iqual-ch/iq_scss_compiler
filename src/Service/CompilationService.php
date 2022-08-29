@@ -39,6 +39,14 @@ class CompilationService {
    */
   protected $logger = NULL;
 
+
+  /**
+   * Whether the call originated on cli.
+   *
+   * @var bool
+   */
+  protected $isCli = PHP_SAPI === 'cli';
+
   /**
    * The watch pause flag file.
    */
@@ -82,6 +90,10 @@ class CompilationService {
       $recursiveIterator = new \RecursiveIteratorIterator($files);
       $this->iterator->append($recursiveIterator);
     }
+  }
+  
+  public function isCli() {
+    return $this->isCli();
   }
 
   /**
@@ -212,6 +224,9 @@ class CompilationService {
   public function compile($continueOnError = FALSE, $verbose = FALSE) {
     $this->pauseWatch();
     $this->startCompilation();
+
+    \Drupal::moduleHandler()->invokeAll('iq_scss_compiler_pre_compile', [$this]);
+
     // Collect all config files and save per path.
     while ($this->iterator->valid()) {
       $file = $this->iterator->current();
@@ -250,6 +265,11 @@ class CompilationService {
           }
           $targetFile = $scssFile->getPath() . '/' . $this->configs[$scssFile->getPath()]['css_dir'] . '/' . str_replace('scss', 'css', $scssFile->getFilename());
         }
+        
+        // Allow other modules to alter the css before saving it.
+        $context = ['source' => $sourceFile, 'target' => $targetFile, 'service' => $this];
+        \Drupal::moduleHandler()->alter('iq_scss_compiler_css', $css, $context);
+        
         file_put_contents($targetFile, $css);
         if ($verbose) {
           $message = 'Compiled ' . $sourceFile . ' into ' . $targetFile;
@@ -259,6 +279,8 @@ class CompilationService {
       $this->iterator->next();
     }
     $this->iterator->rewind();
+
+    \Drupal::moduleHandler()->invokeAll('iq_scss_compiler_post_compile', [$this]);
 
     $this->stopCompilation();
     $this->resumeWatch();
