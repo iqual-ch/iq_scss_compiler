@@ -18,7 +18,7 @@ function hook_iq_scss_compiler_pre_compile(CompilationService $compilationServic
 }
 
 /**
- * Called before the compilation starts.
+ * Called after the compilation completes.
  *
  * @param CompilationService $compilationService
  *   The active compilation service.
