@@ -1,23 +1,23 @@
 {
-	"name": "iqual/iq_scss_compiler",
-	"description": "Provides scss compilation using libsass/sassphp",
-	"type": "drupal-custom-module",
-	"keywords": [
-		"Drupal"
-	],
-	"homepage": "https://github.com/iqual-ch/iq_scss_compiler",
-	"support": {
-		"issues": "https://github.com/iqual-ch/iq_scss_compiler/issues",
-		"source": "https://github.com/iqual-ch/iq_scss_compiler"
-	},
-  "require": {
-    "abm/sassphp": "^0.7.0"
-  },
-	"extra": {
-		"drush": {
-			"services": {
-				"drush.services.yml": "^9"
-			}
-		}
-	}
+    "name": "iqual/iq_scss_compiler",
+    "description": "Provides scss compilation using libsass/sassphp",
+    "type": "drupal-custom-module",
+    "keywords": [
+        "Drupal"
+    ],
+    "homepage": "https://github.com/iqual-ch/iq_scss_compiler",
+    "support": {
+        "issues": "https://github.com/iqual-ch/iq_scss_compiler/issues",
+        "source": "https://github.com/iqual-ch/iq_scss_compiler"
+    },
+    "extra": {
+        "drush": {
+            "services": {
+                "drush.services.yml": "^9"
+            }
+        }
+    },
+    "require": {
+        "scssphp/scssphp": "^1.10"
+    }
 }
