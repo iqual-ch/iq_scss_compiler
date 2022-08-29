@@ -93,7 +93,7 @@ class CompilationService {
   }
   
   public function isCli() {
-    return $this->isCli();
+    return $this->isCli;
   }
 
   /**
