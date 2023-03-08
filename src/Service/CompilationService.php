@@ -26,13 +26,6 @@ class CompilationService {
   protected $configs = [];
 
   /**
-   * The scss/sass compiler.
-   *
-   * @var \Sass
-   */
-  protected $compiler = NULL;
-
-  /**
    * The logger.
    *
    * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
@@ -66,8 +59,6 @@ class CompilationService {
   public function __construct(LoggerChannelFactoryInterface $loggerChannelFactory) {
     $this->logger = $loggerChannelFactory->get('iq_scss_compiler');
     $this->iterator = new \AppendIterator();
-    $this->compiler = new Compiler();
-    $this->compiler->setOutputStyle(OutputStyle::COMPRESSED);
 
     // Reset state to be sure.
     if ($this->isPaused() && filemtime(static::WATCH_FILE) - 300 > time()) {
@@ -242,8 +233,12 @@ class CompilationService {
       $scssFile = $this->iterator->current();
       if ($scssFile->isFile() && $scssFile->getExtension() == 'scss' && strpos($scssFile->getFilename(), '_') !== 0) {
         $sourceFile = $scssFile->getPath() . '/' . $scssFile->getFilename();
+
+        // Create new SASS compiler per .
+        $compiler = new Compiler();
+        $compiler->setOutputStyle(OutputStyle::COMPRESSED);
         try {
-          $css = $this->compiler->compileString('@import "' . $sourceFile . '";')->getCss();
+          $css = $compiler->compileString('@import "' . $sourceFile . '";')->getCss();
         }
         catch (\Exception $e) {
           if ($continueOnError) {
