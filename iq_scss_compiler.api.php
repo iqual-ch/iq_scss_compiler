@@ -10,21 +10,19 @@ use Drupal\iq_scss_compiler\Service\CompilationService;
 /**
  * Called before the compilation starts.
  *
- * @param CompilationService $compilationService
+ * @param \Drupal\iq_scss_compiler\Service\CompilationService $compilationService
  *   The active compilation service.
  */
-function hook_iq_scss_compiler_pre_compile(CompilationService $compilationService)
-{
+function hook_iq_scss_compiler_pre_compile(CompilationService $compilationService) {
 }
 
 /**
  * Called after the compilation completes.
  *
- * @param CompilationService $compilationService
+ * @param \Drupal\iq_scss_compiler\Service\CompilationService $compilationService
  *   The active compilation service.
  */
-function hook_iq_scss_compiler_post_compile(CompilationService $compilationService)
-{
+function hook_iq_scss_compiler_post_compile(CompilationService $compilationService) {
 }
 
 /**
@@ -35,6 +33,5 @@ function hook_iq_scss_compiler_post_compile(CompilationService $compilationServi
  * @param array $context
  *   Arry providing involved files under indexes source and target and the compilation service.
  */
-function hook_iq_scss_compiler_css(string &$css, array &$context)
-{
+function hook_iq_scss_compiler_css(string &$css, array &$context) {
 }
