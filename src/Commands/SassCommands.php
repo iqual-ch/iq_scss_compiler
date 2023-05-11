@@ -3,6 +3,7 @@
 namespace Drupal\iq_scss_compiler\Commands;
 
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\iq_scss_compiler\Service\CompilationService;
 use Drush\Commands\DrushCommands;
 
 /**
@@ -11,13 +12,30 @@ use Drush\Commands\DrushCommands;
 class SassCommands extends DrushCommands {
 
   /**
+   * The logger channel factory.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
+   */
+  protected $loggerChannelFactory;
+
+  /**
+   * The compilation service.
+   *
+   * @var \Drupal\iq_scss_compiler\Service\CompilationService
+   */
+  protected $compilationService;
+
+  /**
    * Constructs a new SassCommands object.
    *
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $loggerChannelFactory
    *   Logger channel factory service.
+   * @param \Drupal\iq_scss_compiler\Service\CompilationService $compilation_service
+   *   The compilation service.
    */
-  public function __construct(LoggerChannelFactoryInterface $loggerChannelFactory) {
+  public function __construct(LoggerChannelFactoryInterface $loggerChannelFactory, CompilationService $compilation_service) {
     $this->loggerChannelFactory = $loggerChannelFactory;
+    $this->compilationService = $compilation_service;
   }
 
   /**
@@ -35,15 +53,14 @@ class SassCommands extends DrushCommands {
     $folders = explode(',', str_replace('}', '', str_replace('{', '', $options['folders'])));
     $ttl = $options['ttl'];
 
-    $compilationService = \Drupal::service('iq_scss_compiler.compilation_service');
     foreach ($folders as $folder) {
       $folder = trim($folder);
       if (!empty($folder)) {
-        $compilationService->addSource(DRUPAL_ROOT . '/' . $folder);
+        $this->compilationService->addSource(DRUPAL_ROOT . '/' . $folder);
       }
     }
     echo 'Starting sass watch' . "\n";
-    $compilationService->watch($ttl);
+    $this->compilationService->watch($ttl);
   }
 
   /**
@@ -63,15 +80,14 @@ class SassCommands extends DrushCommands {
   ]) {
     $folders = explode(',', str_replace('}', '', str_replace('{', '', $options['folders'])));
 
-    $compilationService = \Drupal::service('iq_scss_compiler.compilation_service');
     foreach ($folders as $folder) {
       $folder = trim($folder);
       if (!empty($folder)) {
-        $compilationService->addSource(\Drupal::root() . '/' . $folder);
+        $this->compilationService->addSource(\Drupal::root() . '/' . $folder);
       }
     }
     echo 'Compiling SASS' . "\n";
-    $compilationService->compile();
+    $this->compilationService->compile();
   }
 
 }

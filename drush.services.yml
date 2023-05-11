@@ -3,4 +3,4 @@ services:
     class: \Drupal\iq_scss_compiler\Commands\SassCommands
     tags:
       - { name: drush.command }
-    arguments: ["@logger.factory"]
+    arguments: ["@logger.factory", "@iq_scss_compiler.compilation_service"]
