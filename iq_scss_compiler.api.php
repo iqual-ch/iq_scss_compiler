@@ -31,7 +31,8 @@ function hook_iq_scss_compiler_post_compile(CompilationService $compilationServi
  * @param string $css
  *   The compiled css.
  * @param array $context
- *   Arry providing involved files under indexes source and target and the compilation service.
+ *   Array providing involved files under indexes source and target and the
+ *   compilation service.
  */
 function hook_iq_scss_compiler_css(string &$css, array &$context) {
 }

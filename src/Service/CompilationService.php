@@ -93,7 +93,7 @@ class CompilationService {
   }
 
   /**
-   *
+   * Is Cli.
    */
   public function isCli() {
     return $this->isCli;
@@ -270,7 +270,11 @@ class CompilationService {
         }
 
         // Allow other modules to alter the css before saving it.
-        $context = ['source' => $sourceFile, 'target' => $targetFile, 'service' => $this];
+        $context = [
+          'source' => $sourceFile,
+          'target' => $targetFile,
+          'service' => $this,
+        ];
         \Drupal::moduleHandler()->alter('iq_scss_compiler_css', $css, $context);
 
         file_put_contents($targetFile, $css);
