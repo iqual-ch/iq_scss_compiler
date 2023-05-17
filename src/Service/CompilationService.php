@@ -50,12 +50,12 @@ class CompilationService {
   /**
    * The watch pause flag file.
    */
-  const WATCH_FILE = '/tmp/iqsc_watch_paused';
+  public const WATCH_FILE = '/tmp/iqsc_watch_paused';
 
   /**
    * The compilation flag file.
    */
-  const COMPILE_FILE = '/tmp/iqsc_compiling';
+  public const COMPILE_FILE = '/tmp/iqsc_compiling';
 
   /**
    * Create compilation service.
@@ -91,7 +91,10 @@ class CompilationService {
       $this->iterator->append($recursiveIterator);
     }
   }
-  
+
+  /**
+   * Is Cli.
+   */
   public function isCli() {
     return $this->isCli;
   }
@@ -265,11 +268,15 @@ class CompilationService {
           }
           $targetFile = $scssFile->getPath() . '/' . $this->configs[$scssFile->getPath()]['css_dir'] . '/' . str_replace('scss', 'css', $scssFile->getFilename());
         }
-        
+
         // Allow other modules to alter the css before saving it.
-        $context = ['source' => $sourceFile, 'target' => $targetFile, 'service' => $this];
+        $context = [
+          'source' => $sourceFile,
+          'target' => $targetFile,
+          'service' => $this,
+        ];
         \Drupal::moduleHandler()->alter('iq_scss_compiler_css', $css, $context);
-        
+
         file_put_contents($targetFile, $css);
         if ($verbose) {
           $message = 'Compiled ' . $sourceFile . ' into ' . $targetFile;
