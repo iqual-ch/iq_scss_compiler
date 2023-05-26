@@ -4,4 +4,4 @@ services:
     arguments: ['@logger.factory']
   iq_scss_compiler.sass_commands:
     class: Drupal\iq_scss_compiler\Commands\SassCommands
-    arguments: ['@logger.factory']
+    arguments: ['@logger.factory', '@iq_scss_compiler.compilation_service']
