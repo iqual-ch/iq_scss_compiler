@@ -50,7 +50,7 @@ class SassCommands extends DrushCommands {
    * @usage drush iq_scss_compiler:watch --folders=themes,modules
    */
   public function watch($options = ['folders' => 'themes', 'ttl' => 60]) {
-    $folders = explode(',', str_replace('}', '', str_replace('{', '', $options['folders'])));
+    $folders = explode(',', str_replace('}', '', str_replace('{', '', (string) $options['folders'])));
     $ttl = $options['ttl'];
 
     foreach ($folders as $folder) {
@@ -78,7 +78,7 @@ class SassCommands extends DrushCommands {
     'folders' => 'themes/custom,modules/custom,sites/default/files/styling_profiles',
     'continueOnErrors' => FALSE,
   ]) {
-    $folders = explode(',', str_replace('}', '', str_replace('{', '', $options['folders'])));
+    $folders = explode(',', str_replace('}', '', str_replace('{', '', (string) $options['folders'])));
 
     foreach ($folders as $folder) {
       $folder = trim($folder);

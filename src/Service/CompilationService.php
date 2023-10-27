@@ -50,12 +50,12 @@ class CompilationService {
   /**
    * The watch pause flag file.
    */
-  public const WATCH_FILE = '/tmp/iqsc_watch_paused';
+  final public const WATCH_FILE = '/tmp/iqsc_watch_paused';
 
   /**
    * The compilation flag file.
    */
-  public const COMPILE_FILE = '/tmp/iqsc_compiling';
+  final public const COMPILE_FILE = '/tmp/iqsc_compiling';
 
   /**
    * Create compilation service.
@@ -202,7 +202,7 @@ class CompilationService {
               // File was deleted.
             case ($evdetails['mask'] & IN_DELETE):
             case ($evdetails['mask'] & IN_DELETE_SELF):
-              if (preg_match_all('/\.scss$/', $evdetails['name'])) {
+              if (preg_match_all('/\.scss$/', (string) $evdetails['name'])) {
                 $changeRegistered = TRUE;
               }
               break;
@@ -243,7 +243,7 @@ class CompilationService {
     // Compile files, respecting the config in the same directory.
     while ($this->iterator->valid()) {
       $scssFile = $this->iterator->current();
-      if ($scssFile->isFile() && $scssFile->getExtension() == 'scss' && strpos($scssFile->getFilename(), '_') !== 0) {
+      if ($scssFile->isFile() && $scssFile->getExtension() == 'scss' && !str_starts_with((string) $scssFile->getFilename(), '_')) {
         $sourceFile = $scssFile->getPath() . '/' . $scssFile->getFilename();
         try {
           $css = $this->compiler->compileString('@import "' . $sourceFile . '";')->getCss();
@@ -261,12 +261,12 @@ class CompilationService {
             throw $e;
           }
         }
-        $targetFile = $scssFile->getPath() . '/' . str_replace('scss', 'css', $scssFile->getFilename());
+        $targetFile = $scssFile->getPath() . '/' . str_replace('scss', 'css', (string) $scssFile->getFilename());
         if (!empty($this->configs[$scssFile->getPath()])) {
           if (!is_dir($scssFile->getPath() . '/' . $this->configs[$scssFile->getPath()]['css_dir'])) {
             mkdir($scssFile->getPath() . '/' . $this->configs[$scssFile->getPath()]['css_dir'], 0755, TRUE);
           }
-          $targetFile = $scssFile->getPath() . '/' . $this->configs[$scssFile->getPath()]['css_dir'] . '/' . str_replace('scss', 'css', $scssFile->getFilename());
+          $targetFile = $scssFile->getPath() . '/' . $this->configs[$scssFile->getPath()]['css_dir'] . '/' . str_replace('scss', 'css', (string) $scssFile->getFilename());
         }
 
         // Allow other modules to alter the css before saving it.
