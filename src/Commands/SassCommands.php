@@ -26,16 +26,26 @@ class SassCommands extends DrushCommands {
   protected $compilationService;
 
   /**
+   * The app root.
+   *
+   * @var string
+   */
+  protected string $root;
+
+  /**
    * Constructs a new SassCommands object.
    *
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $loggerChannelFactory
    *   Logger channel factory service.
    * @param \Drupal\iq_scss_compiler\Service\CompilationService $compilation_service
    *   The compilation service.
+   * @param string $root
+   *   The app root.
    */
-  public function __construct(LoggerChannelFactoryInterface $loggerChannelFactory, CompilationService $compilation_service) {
+  public function __construct(LoggerChannelFactoryInterface $loggerChannelFactory, CompilationService $compilation_service, string $root) {
     $this->loggerChannelFactory = $loggerChannelFactory;
     $this->compilationService = $compilation_service;
+    $this->root = $root;
   }
 
   /**
@@ -85,7 +95,7 @@ class SassCommands extends DrushCommands {
     foreach ($folders as $folder) {
       $folder = trim($folder);
       if (!empty($folder)) {
-        $this->compilationService->addSource(\Drupal::root() . '/' . $folder);
+        $this->compilationService->addSource($this->root . '/' . $folder);
       }
     }
     echo 'Compiling SASS' . "\n";

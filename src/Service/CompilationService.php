@@ -177,6 +177,7 @@ class CompilationService {
     // Collect all config files and save per path.
     while ($this->iterator->valid()) {
       $file = $this->iterator->current();
+      // phpcs:ignore
       $watch_descriptor = \inotify_add_watch($fd, $file->getPath(), IN_CREATE | IN_CLOSE_WRITE | IN_MOVE | IN_MOVE_SELF | IN_DELETE | IN_DELETE_SELF | IN_MASK_ADD);
       $this->iterator->next();
     }
@@ -189,6 +190,7 @@ class CompilationService {
       $events = \inotify_read($fd);
 
       if (!$this->isPaused()) {
+        // phpcs:ignore
         foreach ($events as $event => $evdetails) {
           // React on the event type.
           switch (TRUE) {
