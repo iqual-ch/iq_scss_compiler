@@ -191,7 +191,7 @@ class CompilationService {
 
       if (!$this->isPaused()) {
         // phpcs:ignore
-        foreach ($events as $event => $evdetails) {
+        foreach ($events as $evdetails) {
           // React on the event type.
           switch (TRUE) {
             // File was created.
